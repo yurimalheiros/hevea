@@ -7,14 +7,14 @@ packages = ['hevea']
 requires = []
 
 setup(name='hevea',
-      version=0.1,
+      version='0.1.2',
       description='Monitor and compile LaTeX files',
       long_description=open('README.md').read(),
       author=u'Yuri Malheiros',
       author_email='contato@yurimalheiros.com',
-      url='https://github.com/yurimalheiros/hevea',
+      url='https://github.com/yurimalheiros/hevea/',
       packages=packages,
-      package_data={'': ['LICENSE',], 'hevea': []},
+      package_data={'': ['LICENSE', 'README.md'], 'hevea': []},
       package_dir={'hevea': 'hevea'},
       scripts=['scripts/hevea'],
       include_package_data=True,
