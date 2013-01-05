@@ -4,22 +4,34 @@
 Hevea: compile latex automagically.
 """
 import os
-import sys
 import time
+import argparse
 from watchdog.observers import Observer
 from hevea.handler import ChangeHandler
 
-BASEDIR = os.path.abspath(os.path.dirname(__file__))
+BASEDIR = os.path.abspath(os.getcwd())
 
 def main():
     """
     Main function.
     """
+    parser = argparse.ArgumentParser(description="Monitor and compile LaTeX files.")
+    parser.add_argument('directory')
+    parser.add_argument('--main', dest='main_file', required=False)
 
-    watched_dir = os.path.join(BASEDIR, sys.argv[1])
-    event_handler = ChangeHandler(watched_dir)
+    args = parser.parse_args()
+
+    watched_dir = os.path.join(BASEDIR, args.directory)
+    mainfile = args.main_file
+
+    if not os.path.exists(os.path.join(watched_dir, 'Makefile')):
+        if mainfile is None:
+            print "Error: There is not a Makefile in the watched directory, please use the --main parameter or create a Makefile manually"
+            return
+
+    event_handler = ChangeHandler(watched_dir, mainfile)
     observer = Observer()
-    observer.schedule(event_handler, path=sys.argv[1], recursive=True)
+    observer.schedule(event_handler, path=watched_dir, recursive=True)
     observer.start()
 
     print "Watching %s" % watched_dir
