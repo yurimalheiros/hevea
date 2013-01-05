@@ -13,7 +13,7 @@ class ChangeHandler(FileSystemEventHandler):
         self.mainfile = mainfile
 
     def on_any_event(self, event):
-        """If any file or folder is changed"""
+        """If any file or folder is changed."""
 
         if event.is_directory:
             return
@@ -29,8 +29,9 @@ class ChangeHandler(FileSystemEventHandler):
         self._verify_and_create_makefile()
 
         os.chdir(self.directory)
-        FNULL = open(os.devnull, 'w')
-        subprocess.call(r'make', stdout=FNULL)
+        fnull = open(os.devnull, 'w')
+        subprocess.call(r'make', stdout=fnull)
+        fnull.close()
 
     def _get_extension(self, filepath):
         """Get the file extension."""
@@ -38,7 +39,7 @@ class ChangeHandler(FileSystemEventHandler):
         return os.path.splitext(filepath)[-1].lower()
 
     def _verify_and_create_makefile(self):
-        """Create a Makefile if there is not one in the watched directory"""
+        """Create a Makefile if there is not one in the watched directory."""
 
         if not os.path.exists(os.path.join(self.directory, 'Makefile')):
             makefile = open(os.path.join(BASEDIR, 'Makefile'))

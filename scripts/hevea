@@ -14,6 +14,7 @@ CURRENTDIR = os.path.abspath(os.getcwd())
 
 def watch(directory, main_file):
     """Start the monitor."""
+
     event_handler = ChangeHandler(directory, main_file)
     observer = Observer()
     observer.schedule(event_handler, path=directory, recursive=True)
