@@ -7,7 +7,7 @@ packages = ['hevea']
 requires = []
 
 setup(name='hevea',
-      version='0.1.2',
+      version='0.2',
       description='Monitor and compile LaTeX files',
       long_description=open('README.md').read(),
       author=u'Yuri Malheiros',
