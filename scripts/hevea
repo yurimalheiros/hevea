@@ -1,12 +1,13 @@
+#!/usr/bin/env python
+
 """
 Hevea: compile latex automagically.
 """
-
 import os
 import sys
 import time
 from watchdog.observers import Observer
-from handler import ChangeHandler
+from hevea.handler import ChangeHandler
 
 BASEDIR = os.path.abspath(os.path.dirname(__file__))
 
