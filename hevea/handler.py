@@ -6,9 +6,7 @@ from watchdog.events import FileSystemEventHandler
 BASEDIR = os.path.abspath(os.path.dirname(__file__))
 
 class ChangeHandler(FileSystemEventHandler):
-    """
-    React to changes in .tex files
-    """
+    """React to changes in .tex files."""
 
     def __init__(self, directory, mainfile):
         self.directory = directory
@@ -24,7 +22,23 @@ class ChangeHandler(FileSystemEventHandler):
             self.make()
 
     def make(self):
+        """Call the make command."""
+
         print "Compiling..."
+
+        self._verify_and_create_makefile()
+
+        os.chdir(self.directory)
+        FNULL = open(os.devnull, 'w')
+        subprocess.call(r'make', stdout=FNULL)
+
+    def _get_extension(self, filepath):
+        """Get the file extension."""
+
+        return os.path.splitext(filepath)[-1].lower()
+
+    def _verify_and_create_makefile(self):
+        """Create a Makefile if there is not one in the watched directory"""
 
         if not os.path.exists(os.path.join(self.directory, 'Makefile')):
             makefile = open(os.path.join(BASEDIR, 'Makefile'))
@@ -34,12 +48,3 @@ class ChangeHandler(FileSystemEventHandler):
             new_makefile = open(os.path.join(self.directory, 'Makefile'), 'w')
             new_makefile.write(template.substitute(mainfile=self.mainfile, bibtexfile=self.mainfile))
             new_makefile.close()
-
-        FNULL = open(os.devnull, 'w')
-        os.chdir(self.directory)
-        subprocess.call(r'make', stdout=FNULL)
-
-    def _get_extension(self, filepath):
-        "Get the file extension."
-
-        return os.path.splitext(filepath)[-1].lower()

@@ -4,34 +4,19 @@
 Hevea: compile latex automagically.
 """
 import os
+import sys
 import time
 import argparse
 from watchdog.observers import Observer
 from hevea.handler import ChangeHandler
 
-BASEDIR = os.path.abspath(os.getcwd())
+CURRENTDIR = os.path.abspath(os.getcwd())
 
-def main():
-    """
-    Main function.
-    """
-    parser = argparse.ArgumentParser(description="Monitor and compile LaTeX files.")
-    parser.add_argument('directory')
-    parser.add_argument('--main', dest='main_file', required=False)
-
-    args = parser.parse_args()
-
-    watched_dir = os.path.join(BASEDIR, args.directory)
-    mainfile = args.main_file
-
-    if not os.path.exists(os.path.join(watched_dir, 'Makefile')):
-        if mainfile is None:
-            print "Error: There is not a Makefile in the watched directory, please use the --main parameter or create a Makefile manually"
-            return
-
-    event_handler = ChangeHandler(watched_dir, mainfile)
+def watch(directory, main_file):
+    """Start the monitor."""
+    event_handler = ChangeHandler(directory, main_file)
     observer = Observer()
-    observer.schedule(event_handler, path=watched_dir, recursive=True)
+    observer.schedule(event_handler, path=directory, recursive=True)
     observer.start()
 
     print "Watching %s" % watched_dir
@@ -44,5 +29,21 @@ def main():
         observer.stop()
     observer.join()
 
+
 if __name__ == '__main__':
-    main()
+    parser = argparse.ArgumentParser(description="Monitor and compile LaTeX files.")
+    parser.add_argument('directory', help='the watched directory')
+    parser.add_argument('--makefile', dest='main_file', required=False, help='if there is not a Makefile in the watched directory, you must use this option and specify the name of the main LaTeX file')
+
+    args = parser.parse_args()
+
+    watched_dir = os.path.join(CURRENTDIR, args.directory)
+    main_file = args.main_file
+
+    if not os.path.exists(os.path.join(watched_dir, 'Makefile')):
+        if main_file is None:
+            print "Error: There is not a Makefile in the watched directory, please use the --makefile parameter or create a Makefile manually"
+            sys.exit()
+
+    watch(watched_dir, main_file)
+
